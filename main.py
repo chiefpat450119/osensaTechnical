@@ -16,7 +16,24 @@ class Main:
 		self.sampling_rate = 1  # Default value, samples per minute
 		self.api_token = os.getenv("API_TOKEN")
 		self.base_url = "https://api.waqi.info/v2/"
-		self.station_dict = {}  # Maps stations to a list of aqi values
+		self.station_dict: dict[str, list[int]] = {}
+
+
+	def run(self):
+		if not self.get_args():
+			return
+
+		total_samples = max(1, int(self.sampling_period * self.sampling_rate))
+
+		for _ in range(total_samples):
+			success = self.get_sample()
+			if not success:
+				return
+
+			time.sleep(60 / self.sampling_rate)
+
+		self.print_averages()
+
 
 	def get_args(self) -> bool:
 		if len(self.args) < 4 or len(self.args) > 6:
@@ -48,22 +65,6 @@ class Main:
 			return False
 		return True
 
-	def run(self) -> int:
-		if not self.get_args():
-			return 1
-
-		# Ceil so samples is at least 1
-		total_samples = max(1, int(self.sampling_period * self.sampling_rate))
-
-		for _ in range(total_samples):
-			success = self.get_sample()
-			if not success:
-				return 1
-
-			time.sleep(60 / self.sampling_rate)
-
-		self.print_averages()
-		return 0
 
 	def get_sample(self)-> bool:
 		# Add trailing zeros to lat and lon since this is required by the API
@@ -89,6 +90,7 @@ class Main:
 			station_name = station["station"]["name"]
 			if station_name not in self.station_dict:
 				self.station_dict[station_name] = []
+
 			aqi_string = station["aqi"]
 			# Skip stations with no data
 			if aqi_string == "-":
@@ -96,6 +98,7 @@ class Main:
 			self.station_dict[station_name].append(int(aqi_string))
 
 		return True
+
 
 	def print_averages(self) -> float:
 		all_values = []
@@ -116,8 +119,6 @@ class Main:
 			average = sum(all_values) / len(all_values)
 			print(f"{average:.2f}")
 			return average
-
-
 
 
 if __name__ == "__main__":
