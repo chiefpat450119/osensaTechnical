@@ -1,6 +1,6 @@
 # Technical Take-Home for OSENSA
 
-Run `pip install -r requirements.txt`
+Run `pip install -r requirements.txt`  
 Execute with `python main.py lat1 lon1 lat2 lon2 [sampling_period] [sampling_rate]`
 ### Assumptions
 
