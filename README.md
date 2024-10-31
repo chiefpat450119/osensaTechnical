@@ -1,6 +1,7 @@
 # Technical Take-Home for OSENSA
 
-Run with `python main.py lat1 lon1 lat2 lon2 [sampling_period] [sampling_rate]`
+Run `pip install -r requirements.txt`
+Execute with `python main.py lat1 lon1 lat2 lon2 [sampling_period] [sampling_rate]`
 ### Assumptions
 
 - Program is intended to run for n minutes and get real-time samples from the API
